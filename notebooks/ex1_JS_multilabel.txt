@@ -1,0 +1,50 @@
+\begin{table}[p]
+\begin{tabular}{lllll}
+\toprule
+ &  & gemma & Llama2 & mixtral \\
+social_group_category & social_group &  &  &  \\
+\midrule
+\textbf{population} & \textbf{population} & 0.611 & 0.295 & 0.273 \\
+\cline{1-5}
+\multirow[t]{4}{*}{\textbf{age_groups}} & \textbf{18-29} & 0.628 & 0.253 & 0.228 \\
+\textbf{} & \textbf{30-44} & 0.607 & 0.313 & 0.281 \\
+\textbf{} & \textbf{45-59} & 0.621 & 0.312 & 0.284 \\
+\textbf{} & \textbf{60+} & 0.607 & 0.295 & 0.281 \\
+\cline{1-5}
+\multirow[t]{11}{*}{\textbf{berufabschluss_clause}} & \textbf{Berufliches Praktikum/Volontariat} & 0.615 & 0.431 & 0.285 \\
+\textbf{} & \textbf{Berufsfachschulabschluss} & 0.601 & 0.33 & 0.256 \\
+\textbf{} & \textbf{Fachhochschulabschluss} & 0.616 & 0.269 & 0.298 \\
+\textbf{} & \textbf{Fachschulabschluss} & 0.605 & 0.289 & 0.314 \\
+\textbf{} & \textbf{Lehre abgeschlossen} & 0.617 & 0.317 & 0.299 \\
+\textbf{} & \textbf{Meister-/Technikerabschluss} & 0.616 & 0.292 & 0.343 \\
+\textbf{} & \textbf{Universitätsabschluss} & 0.611 & 0.278 & 0.284 \\
+\textbf{} & \textbf{beruflicher Ausbildung} & 0.628 & 0.241 & 0.266 \\
+\textbf{} & \textbf{gewerbliche/landwirtschaftliche Lehre} & 0.619 & 0.336 & 0.293 \\
+\textbf{} & \textbf{kaufmännische Lehre} & 0.628 & 0.316 & 0.301 \\
+\textbf{} & \textbf{keine berufliche Ausbildung} & 0.612 & 0.301 & 0.24 \\
+\cline{1-5}
+\multirow[t]{2}{*}{\textbf{gender}} & \textbf{männlich} & 0.61 & 0.306 & 0.293 \\
+\textbf{} & \textbf{weiblich} & 0.614 & 0.289 & 0.267 \\
+\cline{1-5}
+\multirow[t]{8}{*}{\textbf{leaning_party}} & \textbf{AfD} & 0.614 & 0.35 & 0.37 \\
+\textbf{} & \textbf{CDU/CSU} & 0.611 & 0.334 & 0.289 \\
+\textbf{} & \textbf{FDP} & 0.644 & 0.38 & 0.397 \\
+\textbf{} & \textbf{Grünen} & 0.631 & 0.223 & 0.493 \\
+\textbf{} & \textbf{Kleinpartei} & 0.595 & 0.305 & 0.297 \\
+\textbf{} & \textbf{Linke} & 0.584 & 0.263 & 0.251 \\
+\textbf{} & \textbf{SPD} & 0.61 & 0.283 & 0.292 \\
+\textbf{} & \textbf{keine Partei} & 0.646 & 0.344 & 0.336 \\
+\cline{1-5}
+\multirow[t]{2}{*}{\textbf{ostwest}} & \textbf{Ostdeutschland} & 0.59 & 0.31 & 0.279 \\
+\textbf{} & \textbf{Westdeutschland} & 0.618 & 0.292 & 0.276 \\
+\cline{1-5}
+\multirow[t]{6}{*}{\textbf{schulabschluss_clause}} & \textbf{Abitur} & 0.611 & 0.275 & 0.282 \\
+\textbf{} & \textbf{Fachhochschulreife} & 0.61 & 0.3 & 0.304 \\
+\textbf{} & \textbf{Hauptschulabschluss} & 0.619 & 0.33 & 0.246 \\
+\textbf{} & \textbf{Realschulabschluss} & 0.616 & 0.309 & 0.289 \\
+\textbf{} & \textbf{ist noch Schüler/in} & 0.833 & 0.68 & 0.379 \\
+\textbf{} & \textbf{kein Schulabschluss} & 0.64 & 0.371 & 0.322 \\
+\cline{1-5}
+\bottomrule
+\end{tabular}
+\end{table}
