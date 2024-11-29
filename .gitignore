@@ -1,0 +1,10 @@
+data/raw/*.csv
+data/raw/GLES/*
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+output/
+outputs/*.json
+build/*
