@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-from src.data.read_data import load_lookup_data
+from src.data.read_data import load_lookup_data, load_raw_survey_data
 from src.paths import (
     CODING_DIR,
     PROJECT_DIR,
@@ -350,3 +350,13 @@ def get_2320_2330_lookups(dfs_dict):
     df_2320.insert(0, 'lfdn', df_2320.index)
     df_2330.insert(0, 'lfdn', df_2330.index)
     return df_2320,df_2330
+
+
+if __name__ == "__main__":
+
+    wave_df_dict={}
+    for wave_id in range(12, 22):
+        wave_df, wave_open_ended_df, df_coding_840s = load_raw_survey_data(wave_id)
+        wave_df_dict[wave_id]=wave_df
+    
+    df_2320,df_2330 = get_2320_2330_lookups(wave_df_dict)
