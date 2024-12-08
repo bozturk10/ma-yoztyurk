@@ -544,7 +544,7 @@ def get_survey_to_survey_JS_distances(survey_population_df,fname='s2s_JS_dist.ht
 
     # Update layout
     fig.update_layout(
-        title=''#'Survey to Survey JS Distances for Waves 19,20,21; Compared to Waves (10-19),(10-20),(10-21)',
+        title='',#'Survey to Survey JS Distances for Waves 19,20,21; Compared to Waves (10-19),(10-20),(10-21)',
         xaxis_title='Wave - Date',
         yaxis_title='JS',
         xaxis_tickvals=df['d1'],

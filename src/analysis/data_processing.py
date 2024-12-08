@@ -131,11 +131,12 @@ def get_highest_prob_label(row, model_name):
         print(row, model_name)
         
 
-from lingua import Language, LanguageDetectorBuilder
-languages = [Language.ENGLISH,  Language.GERMAN]
 
-detector = LanguageDetectorBuilder.from_languages(*languages).build()
 def get_langs(text):
+    from lingua import Language, LanguageDetectorBuilder
+    languages = [Language.ENGLISH,  Language.GERMAN]
+
+    detector = LanguageDetectorBuilder.from_languages(*languages).build()
     det_langs=[]
     for result in detector.detect_multiple_languages_of(text):
         #print(f"{result.language.name}: '{sentence[result.start_index:result.end_index]}'")
@@ -147,11 +148,11 @@ def get_demographics_and_llm_labels(wave_number,experiment_folder,wave_demograph
     print(experiment_path)
     df_exp= get_experiment_df(experiment_path)
     
-    df_exp= df_exp[df_exp.user_id.isin(wave_demographics['lfdn'].tolist() )]# to make sure numbers match,i.e  we dont put GLES-LLM inconclusive answers 
+    df_exp= df_exp[df_exp['user_id'].isin(wave_demographics['lfdn'].tolist() )]# to make sure numbers match,i.e  we dont put GLES-LLM inconclusive answers 
     
     model_preds = df_exp['classification_coarse'].apply(lambda x: extract_model_predictions(x, model_name='bert_mixed_coarse_resample20240708_195103'))
     llm_labels_matrix=  pd.DataFrame(model_preds.tolist(), columns=label_names )
-    llm_labels_matrix.index = df_exp.user_id
+    llm_labels_matrix.index = df_exp['user_id']
     llm_labels_matrix.drop(list(llm_labels_matrix.filter(regex='LLM refusal')), axis=1, inplace=True)
     
     highest_prob_pred= df_exp['classification_coarse'].apply(lambda x: get_highest_prob_label(x, model_name='bert_mixed_coarse_resample20240708_195103'))

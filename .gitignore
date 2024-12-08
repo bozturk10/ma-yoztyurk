@@ -1,6 +1,6 @@
 data/raw/*.csv
 data/raw/GLES/*
-__pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
@@ -8,3 +8,5 @@ __pycache__/
 output/
 outputs/*.json
 build/*
+.ipynb_checkpoints/
+outputs/text_generations/*

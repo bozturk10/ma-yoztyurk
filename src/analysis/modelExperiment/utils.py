@@ -12,7 +12,7 @@ model_experiments= [
 
 
 def get_modelExperiment_data(save=False):
-    wave_number=12 # ablation is only performed on #12
+    wave_number=12 # model exp is only performed on #12
     demographics= get_wave_demographics(wave_number)
     survey_labels_12 = get_demographics_and_labels(wave_number,demographics)
 

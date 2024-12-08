@@ -32,8 +32,8 @@ berufabschluss_dict = load_lookup_data(
 )
 
 
-df_2320 = pd.read_csv(os.path.join(CODING_DIR, "df_2320.csv"))
-df_2330 = pd.read_csv(os.path.join(CODING_DIR, "df_2330.csv"))
+#df_2320 = pd.read_csv(os.path.join(CODING_DIR, "df_2320.csv"))
+#df_2330 = pd.read_csv(os.path.join(CODING_DIR, "df_2330.csv"))
 
 edu_lookup = pd.read_csv(os.path.join(CODING_DIR, "education_lookup.csv"))
 month_names_dict = load_lookup_data(os.path.join(CODING_DIR, "month_names_german.json"))
@@ -237,8 +237,8 @@ def process_wave_data(wave_df, wave_open_ended_df_merged, wave_number):
     wave_df = pd.merge(
         wave_df, wave_open_ended_df_merged, on="lfdn"
     )
-    df_2320_lookup= df_2320[['lfdn', f'kp{wave_number}_2320']].rename({f'kp{wave_number}_2320':'code_2320'},axis=1) # schulabschluss values for wave_number
-    df_2330_lookup= df_2330[['lfdn', f'kp{wave_number}_2330']].rename({f'kp{wave_number}_2330':'code_2330'},axis=1) # berufabschluss values for wave_number
+    df_2320_lookup= edu_lookup[['lfdn', f'code_2320']]#.rename({f'kp{wave_number}_2320':'code_2320'},axis=1) # schulabschluss values for wave_number
+    df_2330_lookup= edu_lookup[['lfdn', f'code_2330']]#.rename({f'kp{wave_number}_2330':'code_2330'},axis=1) # berufabschluss values for wave_number
     wave_df = wave_df.merge(df_2320_lookup, on="lfdn", how="left")
     wave_df = wave_df.merge(df_2330_lookup, on="lfdn", how="left")
 
@@ -345,8 +345,8 @@ def get_2320_2330_lookups(dfs_dict):
             print(key, col)
             values = np.where(dfs_dict[key][col].values < 0, np.nan, dfs_dict[key][col].values)
             df_2330.loc[dfs_dict[key]['lfdn'], col] = values
-    df_2320 = df_2320.ffill(axis=1).infer_objects(copy=False)
-    df_2330 = df_2330.ffill(axis=1).infer_objects(copy=False)
+    df_2320 = df_2320.ffill(axis=1).infer_objects(copy=None)
+    df_2330 = df_2330.ffill(axis=1).infer_objects(copy=None)
     df_2320.insert(0, 'lfdn', df_2320.index)
     df_2330.insert(0, 'lfdn', df_2330.index)
     return df_2320,df_2330
@@ -360,3 +360,4 @@ if __name__ == "__main__":
         wave_df_dict[wave_id]=wave_df
     
     df_2320,df_2330 = get_2320_2330_lookups(wave_df_dict)
+    save_2320_2330_lookup(df_2320,df_2330)

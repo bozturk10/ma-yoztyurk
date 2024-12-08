@@ -22,7 +22,7 @@ def get_label_distr_time_series_plot(survey_labels_dict2):
     # Combine all data into a single DataFrame
     plot_df = pd.concat(plot_data, ignore_index=True)
     plot_df['Answer Labels'] = plot_df['Answer Labels'].map(coarse_translation)  # Updated column name
-
+    return plot_df
     # Calculate the average frequency for each label
     avg_freq = plot_df.groupby('Answer Labels')['freq'].mean().reset_index()
     avg_freq = avg_freq.sort_values(by='freq', ascending=False)
