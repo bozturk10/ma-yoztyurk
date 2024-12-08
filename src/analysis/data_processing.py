@@ -4,7 +4,7 @@ from src.paths import MODELS_DIR, OUTPUTS_DIR
 import os
 import torch
 import pandas as pd
-from src.data.process_data import process_open_ended, process_wave_data,process_open_ended_new
+from src.data.process_data import process_open_ended, process_wave_data,process_open_ended
 from src.data.read_data import load_raw_survey_data, read_stata_file
 from src.paths import CODING_DIR, GLES_DIR, PROCESSED_DATA_DIR, ANNOTATED_GENERATIONS_DIR,RAW_DATA_DIR
 from src.utils import get_lang
@@ -89,7 +89,7 @@ coarse_translation = {
 
 def get_wave_demographics(wave_number):
     wave_df, wave_open_ended_df, df_coding_840s = load_raw_survey_data(wave_number)
-    wave_open_ended_df = process_open_ended_new(wave_open_ended_df, df_coding_840s, wave_number)
+    wave_open_ended_df = process_open_ended(wave_open_ended_df, df_coding_840s, wave_number)
     wave_df_processed = process_wave_data(wave_df, wave_open_ended_df, wave_number).filter(regex='lfdn$|gender|^age$|^age_groups$|clause|party|ostwest|user|labels|eastwest|text|output|highest_prob_label')
     wave_df_processed['highest_prob_label']=wave_df_processed['highest_prob_label'].map(label2str)
     age_bins = [17, 29, 44, 59, 74]

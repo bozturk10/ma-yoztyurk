@@ -5,12 +5,11 @@ import time
 import torch
 from dotenv import load_dotenv
 from tqdm import tqdm
-import wandb
 
 from src.data.process_data import process_open_ended, process_wave_data
 from src.data.read_data import load_raw_survey_data
 from src.experiment.experiment_utils import get_experiment_config
-from src.HFTextGenerator import HFTextGenerator
+from HFTextGenerator import HFTextGenerator
 from src.logger import setup_logger
 from src.paths import (
     GENERATIONS_DIR,
@@ -23,7 +22,7 @@ logger = setup_logger("experiment_logger")
 
 
 def experiment_setup(nb=False, experiment_config_path=None):
-    dotenv_path = os.path.join(PROJECT_DIR, "experiment_berk.env")
+    dotenv_path = os.path.join(PROJECT_DIR, "experiment.env")
     load_dotenv(dotenv_path)
     logger.info(os.environ.get("HF_HOME"))
     logger.info(os.environ.get("HUGGINGFACE_HUB_CACHE"))
@@ -132,9 +131,6 @@ def run_experiment_batched(
 
 def main():
     config = experiment_setup()
-
-    wandb.init(project="experiment", name=config["experiment_results_folder"], config=config)
-
     wave_number = config["wave_number"]
     model_name = config["model_name"]
     device = config["device"]
@@ -195,4 +191,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    wandb.finish()

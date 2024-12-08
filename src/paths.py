@@ -18,9 +18,9 @@ GENERATIONS_DIR = os.path.join(OUTPUTS_DIR, 'text_generations')
 ANNOTATED_GENERATIONS_DIR = os.path.join(PROCESSED_DATA_DIR, 'annotated_generations')
 LOGS_DIR = os.path.join(PROJECT_DIR, 'logs')
 CLSF_LOGS_DIR = os.path.join(LOGS_DIR, 'classification_reports')
-TRAIN_DATA_DIR = os.path.join(DATA_DIR, 'labeled_04_05')
+TRAIN_DATA_DIR = os.path.join(DATA_DIR, 'bert_train_data')
 RESULTS_DIR =   os.path.join(PROJECT_DIR, 'results')
-
+TEXT_GEN_DIR = os.path.join(OUTPUTS_DIR, 'text_generations')
 
 if __name__ == "__main__":
     print("PROJECT_DIR:",PROJECT_DIR)

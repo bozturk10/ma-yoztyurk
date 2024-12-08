@@ -16,7 +16,6 @@ def read_stata_file(file):
     wave_id = re.search(r'_w(.*?)_', file)
     if wave_id:
         wave_id = wave_id.group(1)
-    #df['filename']=file
     df['wave_id']=wave_id
 
     return df
@@ -27,7 +26,7 @@ def load_lookup_data(filename):
         return {int(k): v for k, v in data.items()}
 
 def load_raw_survey_data(wave_number):
-    if wave_number>=1 and wave_number <= 9:
+    if type(wave_number)== int and (wave_number>=1 and wave_number <= 9):
         wave_fname= 'ZA6838_w1to9_sA_v6-0-0.dta'
         wave_open_ended_fname = f'ZA6838_W{wave_number}_open-ended_v6-0-0.csv'# GLES
 
@@ -43,12 +42,22 @@ def load_raw_survey_data(wave_number):
 
     return wave_df, wave_open_ended_df, df_coding_840s
 
+def get_wave_ids():
+    wave_ids = [match.group(1) for fname in os.listdir(GLES_DIR) if fname.endswith('.dta') and (match := re.search(r'_w([^_]+)_s', fname))]
+    wave_ids = ['a2','1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21']
+    print(wave_ids)
+    return wave_ids
+
+def get_wave_df_dict():
+    wave_df_dict={}
+
+    for wave_id in get_wave_ids():
+        wave_df, _, _= load_raw_survey_data(wave_id)
+        wave_df_dict[wave_id]=wave_df
+
+    return wave_df_dict
 
 if __name__ == "__main__":
     print("PROJECT_DIR",PROJECT_DIR)
     print("CODING_DIR",CODING_DIR)
-
-
-# survey_files = [os.path.join(GLES_DIR,fname) for fname in os.listdir(GLES_DIR) if fname.endswith('dta') and 'Zeitvariablen' not in fname ]
-# dfs = list(map(lambda file: read_stata_file(file),survey_files ) )
-# dfs_dict= {df.iloc[0].wave_id: df for df in dfs}
+    load_all_surveys()

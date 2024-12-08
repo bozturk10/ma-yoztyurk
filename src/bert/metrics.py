@@ -4,14 +4,13 @@ import json
 import os
 import numpy as np
 from sklearn.metrics import classification_report
-import wandb
+from evaluate import load
 
 from src.paths import CLSF_LOGS_DIR
 from src.utils import load_lookup_data
 
 
 def define_metrics():
-    from evaluate import load
     accuracy = load("accuracy",'multilabel',trust_remote_code=True)
     precision = load("precision",'multilabel',trust_remote_code=True)
     recall = load("recall",'multilabel',trust_remote_code=True)

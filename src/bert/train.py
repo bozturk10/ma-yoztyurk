@@ -1,5 +1,4 @@
 import argparse
-import wandb
 import os 
 import pandas as pd
 from src.paths import CODING_DIR, LOGS_DIR
@@ -14,7 +13,6 @@ from bert_classifier import BertClassifier
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--class_mode", type=str, help='Class mode: "coarse" or "fine"')
-    parser.add_argument("--wandb", type=bool, default=False, help='to log to wandb or not')
     parser.add_argument("--dataset", type=str, default='gles', help='llm or gles dataset')
     parser.add_argument('--model_name', type=str, default=None, help='The name of the model')
     parser.add_argument('--loss_type', type=str, default=None, help='The type of loss to use: default, focal, dbloss,resample ')
@@ -29,13 +27,9 @@ def main():
         answer_df = get_answer_df(class_mode)
         train_df, test_df = split_train_test_df(answer_df, i)
         train_df=train_df.sample(frac=0.1)
-        if args.wandb:
-            wandb.init(name=f"{args.dataset}_{class_mode}", project='bert_' + class_mode, dir=os.path.join(LOGS_DIR, 'wandb'))
     elif args.dataset == 'llm':
         answer_df = get_annotated_answers()
         train_df, test_df = split_llm_train_test(answer_df, test_size=0.2)
-        if args.wandb:
-            wandb.init(name=f"{args.dataset}_{class_mode}", project='bert_' + class_mode)
     elif args.dataset == 'mixed':
         i = 12
         answer_df = get_answer_df(class_mode,drop_duplicates=True)
@@ -46,8 +40,6 @@ def main():
         llm_train_df, llm_test_df = split_llm_train_test(llm_answer_df, test_size=0.2)
         train_df_combined = pd.concat([train_df, llm_train_df])
         test_df_combined = pd.concat([test_df, llm_test_df])
-        if args.wandb:
-            wandb.init(name=f"{args.dataset}_{class_mode}", project='bert_' + class_mode, dir=os.path.join(LOGS_DIR, 'wandb'))
     else:
         print('Dataset not implemented error')
         raise NotImplementedError
@@ -74,7 +66,7 @@ def main():
 
     metrics = define_metrics()
     compute_metrics = get_compute_metrics_function(metrics, target_names=label2str.values())
-    clf.train(splits, compute_metrics, report_to="wandb" if args.wandb else None)
+    clf.train(splits, compute_metrics)
 
     i = 12
     answer_df = get_answer_df(class_mode,drop_duplicates=True)
@@ -104,68 +96,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser()
-    
-#     parser.add_argument("--class_mode", type=str ,help='Class mode: "coarse" or "fine"')
-#     parser.add_argument("--wandb", type=bool, default=True, help='to log to wandb or not')
-#     parser.add_argument("--dataset", type=str, default='gles', help='llm or gles dataset')
-
-#     args = parser.parse_args()
-#     class_mode= args.class_mode
-        
-    
-
-#     print('args',args)
-#     if args.dataset == 'gles':
-#         parser.add_argument("--wave", type=int, default=20, help='Wave number to use for testing, rest is for training')
-#         i=args.wave 
-#         answer_df= get_answer_df(class_mode)
-#         train_df, test_df = split_train_test_df(answer_df,i)
-#         print('shapes',train_df.shape, test_df.shape)
-#         print(f'using batch {i} as the test df')
-#         if args.wandb:
-#             wandb.init(name=f"{args.dataset}_{class_mode}", project='bert_'+ class_mode)
-    
-#     if args.dataset == 'llm':
-#         answer_df= get_annotated_answers()
-#         train_df, test_df = split_llm_train_test(answer_df,test_size=0.2)
-#         print('shapes',train_df.shape, test_df.shape)
-#         print('using LLM dataset')
-#             #os.environ['WANDB_DISABLED'] = 'true'
-#         if args.wandb:
-#             wandb.init(name=f"{args.dataset}_{class_mode}", project='bert_'+ class_mode)
-
-#     if args.dataset == 'mixed':
-#         #parser.add_argument("--wave", type=int, default=20, help='Wave number to use for testing, rest is for training')
-#         i=12
-#         answer_df= get_answer_df(class_mode)
-#         train_df, test_df = split_train_test_df(answer_df,i)
-
-
-#         llm_answer_df= get_annotated_answers()
-#         llm_train_df, llm_test_df = split_llm_train_test(llm_answer_df,test_size=0.2)
-
-#         train_df = pd.concat([train_df,llm_train_df])
-#         test_df = pd.concat([test_df,llm_test_df])
-#         print('shapes',train_df.shape, test_df.shape)
-#         print(f'using mixture of gles and llm datasets, with batch {i} as the test df')
-#         if args.wandb:
-#             wandb.init(name=f"{args.dataset}_{class_mode}", project='bert_'+ class_mode)
-    
-
-   
-    
-#     tokenizer, model = init_model_and_tokenizer(classid2trainid)
-    
-#     label2str = get_label2str_dict(model.config.label2id,class_mode)
-
-#     compute_metrics = get_compute_metrics_function(metrics,target_names=label2str.values())
-
-#     splits=prepare_train_dataset(train_df,tokenizer)
-#     test_split=prepare_test_dataset(test_df,tokenizer)
-
-#     trainer,eval_metrics= train_bert_model(model, tokenizer, splits,compute_metrics=compute_metrics,report_to=None)
-#     eval_on_test(trainer,test_split)

@@ -15,7 +15,6 @@ from transformers import (
     TrainingArguments,
 )
 
-import wandb
 from src.bert.custom_trainer import CustomTrainer
 from src.bert.data_prep import (
     get_annotated_answers,

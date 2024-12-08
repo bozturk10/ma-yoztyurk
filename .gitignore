@@ -7,6 +7,6 @@ data/raw/GLES/*
 *.egg-info/
 output/
 outputs/*.json
-build/*
-.ipynb_checkpoints/
+build/
+**/.ipynb_checkpoints/
 outputs/text_generations/*

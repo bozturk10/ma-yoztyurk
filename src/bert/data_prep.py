@@ -6,7 +6,7 @@ import pandas as pd
 from datasets import Dataset, DatasetDict
 from sklearn.preprocessing import MultiLabelBinarizer
 
-from src.paths import CODING_DIR, MODELS_DIR, RAW_DATA_DIR,PROJECT_DIR,TRAIN_DATA_DIR
+from src.paths import CODING_DIR, MODELS_DIR, RAW_DATA_DIR,PROJECT_DIR,TRAIN_DATA_DIR,TEXT_GEN_DIR
 from src.utils import load_lookup_data
 
 def get_annotated_answers():
@@ -18,7 +18,7 @@ def get_annotated_answers():
             if file_name.endswith('.json') :#and '_labeled' in file_name:
                 file_path = os.path.join(root, file_name)
                 json_data = pd.read_json(file_path)
-                json_data['folder'] = root.replace('/dss/dsshome1/0F/ra46lup2/ma-yoztyurk/data/labeled_04_05/','')
+                json_data['folder'] = root.replace(f'/{TEXT_GEN_DIR}/','')
                 json_data['file_name'] = json_data['folder']+ '/'+file_name
                 if 'output' in json_data.columns and 'label' in json_data.columns:
                     if json_data.label.str.contains(",").any():
@@ -63,65 +63,64 @@ def split_train_test_df(df,test_wave):
     test_df = df[df.wave == test_wave]
     return train_df, test_df
 
-def get_answer_df3(class_mode,drop_duplicates=False):
-    """
-    option: class_mode: 'coarse' or 'fine' ; if you want to use clustered labels, num_classes = 15
+# def get_answer_df3(class_mode,drop_duplicates=False):
+#     """
+#     option: class_mode: 'coarse' or 'fine' ; if you want to use clustered labels, num_classes = 15
 
-    get open ended answers and assigned labels (min 1, max 3 labels per answer) for all waves 10-21 
-    filter no response rows
-    drop duplicate text answers to avoid overfitting
+#     get open ended answers and assigned labels (min 1, max 3 labels per answer) for all waves 10-21 
+#     filter no response rows
+#     drop duplicate text answers to avoid overfitting
     
-    output: df[text, labels, wave_id]
-    """
-    coding_840s_path = os.path.join(RAW_DATA_DIR,r"ZA7957_6838_v2.0.0.csv") # BERT classification for open ended answers 
-    df_coding_840s = pd.read_csv(coding_840s_path, sep=';', encoding='iso-8859-1')
-    answer_waves=[]
-    print('77')
-    for i in range(12,13):
-        print('79',i)
-        regexstr=f"lfdn|kp{i}_840_c1|kp{i}_840_c2|kp{i}_840_c3|kp{i}_840s"
-        wave_i_df=df_coding_840s.filter(regex=regexstr, axis=1).dropna().rename(columns=lambda x: x.replace(f"kp{i}_840", "kpx_840")).reset_index(drop=True)
-        wave_i_df['wave']=i
-        answer_waves.append(wave_i_df)
-    wave10_21_answer_df=pd.concat(answer_waves, axis=0)
-    wave10_21_answer_df = wave10_21_answer_df[(wave10_21_answer_df.kpx_840_c1.ge(0)) | (wave10_21_answer_df.kpx_840_c1.isin([-99, -98]))]
-    if drop_duplicates: # for training, it makes sense to train on unique answers 
-        wave10_21_answer_df= wave10_21_answer_df.drop_duplicates(subset='kpx_840s')
-    wave10_21_answer_df.kpx_840_c2 = wave10_21_answer_df.kpx_840_c2.mask(wave10_21_answer_df.kpx_840_c2 < 0, 0).astype(int) 
-    wave10_21_answer_df.kpx_840_c3 = wave10_21_answer_df.kpx_840_c3.mask(wave10_21_answer_df.kpx_840_c3 < 0, 0).astype(int) 
-    wave10_21_answer_df.kpx_840_c1 = wave10_21_answer_df.kpx_840_c1.astype(int) 
+#     output: df[text, labels, wave_id]
+#     """
+#     coding_840s_path = os.path.join(RAW_DATA_DIR,r"ZA7957_6838_v2.0.0.csv") # BERT classification for open ended answers 
+#     df_coding_840s = pd.read_csv(coding_840s_path, sep=';', encoding='iso-8859-1')
+#     answer_waves=[]
+#     print('77')
+#     for i in range(12,13):
+#         regexstr=f"lfdn|kp{i}_840_c1|kp{i}_840_c2|kp{i}_840_c3|kp{i}_840s"
+#         wave_i_df=df_coding_840s.filter(regex=regexstr, axis=1).dropna().rename(columns=lambda x: x.replace(f"kp{i}_840", "kpx_840")).reset_index(drop=True)
+#         wave_i_df['wave']=i
+#         answer_waves.append(wave_i_df)
+#     wave10_21_answer_df=pd.concat(answer_waves, axis=0)
+#     wave10_21_answer_df = wave10_21_answer_df[(wave10_21_answer_df.kpx_840_c1.ge(0)) | (wave10_21_answer_df.kpx_840_c1.isin([-99, -98]))]
+#     if drop_duplicates: # for training, it makes sense to train on unique answers 
+#         wave10_21_answer_df= wave10_21_answer_df.drop_duplicates(subset='kpx_840s')
+#     wave10_21_answer_df.kpx_840_c2 = wave10_21_answer_df.kpx_840_c2.mask(wave10_21_answer_df.kpx_840_c2 < 0, 0).astype(int) 
+#     wave10_21_answer_df.kpx_840_c3 = wave10_21_answer_df.kpx_840_c3.mask(wave10_21_answer_df.kpx_840_c3 < 0, 0).astype(int) 
+#     wave10_21_answer_df.kpx_840_c1 = wave10_21_answer_df.kpx_840_c1.astype(int) 
 
-    if class_mode == 'fine':
-        labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x != 0].astype(int)), axis=1)
-        classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).subclassid.unique())) }    
+#     if class_mode == 'fine':
+#         labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x != 0].astype(int)), axis=1)
+#         classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).subclassid.unique())) }    
 
-    if class_mode == 'coarse':
-        df= pd.read_csv(os.path.join(CODING_DIR,'map.csv'))
-        lookup= dict(zip(df.subclassid,df.upperclass_id))
-        for col in wave10_21_answer_df.filter(like='kpx_840_c').columns:
-            wave10_21_answer_df[col] = wave10_21_answer_df[col].map(lookup)
+#     if class_mode == 'coarse':
+#         df= pd.read_csv(os.path.join(CODING_DIR,'map.csv'))
+#         lookup= dict(zip(df.subclassid,df.upperclass_id))
+#         for col in wave10_21_answer_df.filter(like='kpx_840_c').columns:
+#             wave10_21_answer_df[col] = wave10_21_answer_df[col].map(lookup)
         
-        llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv')).rename({'output':'kpx_840s','label':'kpx_840_c1'},axis=1)
-        llm_refusal_df['wave']= 'synthetic'
-        wave10_21_answer_df = pd.concat([wave10_21_answer_df,llm_refusal_df])
+#         llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv')).rename({'output':'kpx_840s','label':'kpx_840_c1'},axis=1)
+#         llm_refusal_df['wave']= 'synthetic'
+#         wave10_21_answer_df = pd.concat([wave10_21_answer_df,llm_refusal_df])
         
-        labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x.notna()].astype(int)), axis=1)
-        classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).upperclass_id.unique())) }    
+#         labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x.notna()].astype(int)), axis=1)
+#         classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).upperclass_id.unique())) }    
 
 
-    wave10_21_answer_df['labels_list']= labels_list
-    #convert labels to binarized format
-    wave10_21_answer_df = wave10_21_answer_df.rename(columns={'kpx_840s':'text'}) #kpx_840s
-    classes = list(classid2trainid.keys())
-    mlb = MultiLabelBinarizer(classes=classes)
-    sparse_matrix = mlb.fit_transform(labels_list).astype(float).tolist()   
-    wave10_21_answer_df['labels'] = sparse_matrix
+#     wave10_21_answer_df['labels_list']= labels_list
+#     #convert labels to binarized format
+#     wave10_21_answer_df = wave10_21_answer_df.rename(columns={'kpx_840s':'text'}) #kpx_840s
+#     classes = list(classid2trainid.keys())
+#     mlb = MultiLabelBinarizer(classes=classes)
+#     sparse_matrix = mlb.fit_transform(labels_list).astype(float).tolist()   
+#     wave10_21_answer_df['labels'] = sparse_matrix
 
-    mlb.classes_= np.array(classes)
-    mlb_path = os.path.join(MODELS_DIR, "mlb.pkl")
-    with open(mlb_path, 'wb') as f:
-        pickle.dump(mlb, f)
-    return wave10_21_answer_df
+#     mlb.classes_= np.array(classes)
+#     mlb_path = os.path.join(MODELS_DIR, "mlb.pkl")
+#     with open(mlb_path, 'wb') as f:
+#         pickle.dump(mlb, f)
+#     return wave10_21_answer_df
 
 
 def get_answer_df(class_mode,drop_duplicates=False):
@@ -184,55 +183,55 @@ def get_answer_df(class_mode,drop_duplicates=False):
     return wave10_21_answer_df
 
 
-def get_answer_df2(df,class_mode,drop_duplicates=False):
-    """
-    option: class_mode: 'coarse' or 'fine' ; if you want to use clustered labels, num_classes = 15
+# def get_answer_df2(df,class_mode,drop_duplicates=False):
+#     """
+#     option: class_mode: 'coarse' or 'fine' ; if you want to use clustered labels, num_classes = 15
 
-    get open ended answers and assigned labels (min 1, max 3 labels per answer) for all waves 10-21 
-    filter no response rows
-    drop duplicate text answers to avoid overfitting
+#     get open ended answers and assigned labels (min 1, max 3 labels per answer) for all waves 10-21 
+#     filter no response rows
+#     drop duplicate text answers to avoid overfitting
     
-    output: df[text, labels, wave_id]
-    """
-    wave10_21_answer_df=df
-    wave10_21_answer_df = wave10_21_answer_df[(wave10_21_answer_df.kpx_840_c1.ge(0)) | (wave10_21_answer_df.kpx_840_c1.isin([-99, -98]))]
-    if drop_duplicates: # for training, it makes sense to train on unique answers 
-        wave10_21_answer_df= wave10_21_answer_df.drop_duplicates(subset='kpx_840s')
-    wave10_21_answer_df.kpx_840_c2 = wave10_21_answer_df.kpx_840_c2.mask(wave10_21_answer_df.kpx_840_c2 < 0, 0).astype(int) 
-    wave10_21_answer_df.kpx_840_c3 = wave10_21_answer_df.kpx_840_c3.mask(wave10_21_answer_df.kpx_840_c3 < 0, 0).astype(int) 
-    wave10_21_answer_df.kpx_840_c1 = wave10_21_answer_df.kpx_840_c1.astype(int) 
+#     output: df[text, labels, wave_id]
+#     """
+#     wave10_21_answer_df=df
+#     wave10_21_answer_df = wave10_21_answer_df[(wave10_21_answer_df.kpx_840_c1.ge(0)) | (wave10_21_answer_df.kpx_840_c1.isin([-99, -98]))]
+#     if drop_duplicates: # for training, it makes sense to train on unique answers 
+#         wave10_21_answer_df= wave10_21_answer_df.drop_duplicates(subset='kpx_840s')
+#     wave10_21_answer_df.kpx_840_c2 = wave10_21_answer_df.kpx_840_c2.mask(wave10_21_answer_df.kpx_840_c2 < 0, 0).astype(int) 
+#     wave10_21_answer_df.kpx_840_c3 = wave10_21_answer_df.kpx_840_c3.mask(wave10_21_answer_df.kpx_840_c3 < 0, 0).astype(int) 
+#     wave10_21_answer_df.kpx_840_c1 = wave10_21_answer_df.kpx_840_c1.astype(int) 
 
-    if class_mode == 'fine':
-        labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x != 0].astype(int)), axis=1)
-        classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).subclassid.unique())) }    
+#     if class_mode == 'fine':
+#         labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x != 0].astype(int)), axis=1)
+#         classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).subclassid.unique())) }    
 
-    if class_mode == 'coarse':
-        df= pd.read_csv(os.path.join(CODING_DIR,'map.csv'))
-        lookup= dict(zip(df.subclassid,df.upperclass_id))
-        for col in wave10_21_answer_df.filter(like='kpx_840_c').columns:
-            wave10_21_answer_df[col] = wave10_21_answer_df[col].map(lookup)
+#     if class_mode == 'coarse':
+#         df= pd.read_csv(os.path.join(CODING_DIR,'map.csv'))
+#         lookup= dict(zip(df.subclassid,df.upperclass_id))
+#         for col in wave10_21_answer_df.filter(like='kpx_840_c').columns:
+#             wave10_21_answer_df[col] = wave10_21_answer_df[col].map(lookup)
         
-        llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv')).rename({'output':'kpx_840s','label':'kpx_840_c1'},axis=1)
-        llm_refusal_df['wave']= 'synthetic'
-        wave10_21_answer_df = pd.concat([wave10_21_answer_df,llm_refusal_df])
+#         llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv')).rename({'output':'kpx_840s','label':'kpx_840_c1'},axis=1)
+#         llm_refusal_df['wave']= 'synthetic'
+#         wave10_21_answer_df = pd.concat([wave10_21_answer_df,llm_refusal_df])
         
-        labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x.notna()].astype(int)), axis=1)
-        classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).upperclass_id.unique())) }    
+#         labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x.notna()].astype(int)), axis=1)
+#         classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).upperclass_id.unique())) }    
 
 
-    wave10_21_answer_df['labels_list']= labels_list
-    #convert labels to binarized format
-    wave10_21_answer_df = wave10_21_answer_df.rename(columns={'kpx_840s':'text'}) #kpx_840s
-    classes = list(classid2trainid.keys())
-    mlb = MultiLabelBinarizer(classes=classes)
-    sparse_matrix = mlb.fit_transform(labels_list).astype(float).tolist()   
-    wave10_21_answer_df['labels'] = sparse_matrix
+#     wave10_21_answer_df['labels_list']= labels_list
+#     #convert labels to binarized format
+#     wave10_21_answer_df = wave10_21_answer_df.rename(columns={'kpx_840s':'text'}) #kpx_840s
+#     classes = list(classid2trainid.keys())
+#     mlb = MultiLabelBinarizer(classes=classes)
+#     sparse_matrix = mlb.fit_transform(labels_list).astype(float).tolist()   
+#     wave10_21_answer_df['labels'] = sparse_matrix
 
-    mlb.classes_= np.array(classes)
-    mlb_path = os.path.join(MODELS_DIR, "mlb.pkl")
-    with open(mlb_path, 'wb') as f:
-        pickle.dump(mlb, f)
-    return wave10_21_answer_df
+#     mlb.classes_= np.array(classes)
+#     mlb_path = os.path.join(MODELS_DIR, "mlb.pkl")
+#     with open(mlb_path, 'wb') as f:
+#         pickle.dump(mlb, f)
+#     return wave10_21_answer_df
 
 
 def get_classid2trainid(wave10_21_answer_df):
