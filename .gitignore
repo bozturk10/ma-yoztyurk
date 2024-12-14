@@ -10,3 +10,5 @@ outputs/*.json
 build/
 **/.ipynb_checkpoints/
 outputs/text_generations/*
+models/bert_model/
+outputs/clf_training/*

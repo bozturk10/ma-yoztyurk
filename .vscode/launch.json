@@ -1,15 +1,32 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        {
+            "name": "Python: Train BERT",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/bert/train.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--class_mode", "coarse",
+                "--dataset", "mixed",
+                "--model_name", "bert_model",
+                "--loss_type", "resample"
+            ],
+            "justMyCode": true
+        },
         {
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
-        }
+        },
+        {
+            "name": "Python Debugger: Python File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}"
+        },
     ]
 }

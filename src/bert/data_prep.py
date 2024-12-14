@@ -10,32 +10,15 @@ from src.paths import CODING_DIR, MODELS_DIR, RAW_DATA_DIR,PROJECT_DIR,TRAIN_DAT
 from src.utils import load_lookup_data
 
 def get_annotated_answers():
-    df_list=[]
-    for root, dirs, files in os.walk(TRAIN_DATA_DIR):
-        print('root',root)
-        print('dirs',dirs)
-        for file_name in files:
-            if file_name.endswith('.json') :#and '_labeled' in file_name:
-                file_path = os.path.join(root, file_name)
-                json_data = pd.read_json(file_path)
-                json_data['folder'] = root.replace(f'/{TEXT_GEN_DIR}/','')
-                json_data['file_name'] = json_data['folder']+ '/'+file_name
-                if 'output' in json_data.columns and 'label' in json_data.columns:
-                    if json_data.label.str.contains(",").any():
-                        #print(f"success: {dirs,file_name} was labeled multi label,adding it ",json_data.label.str.contains(",").sum())
-                        df_list.append(json_data)
-                    else:
-                        print('warn,not multilabel, skipping file',dirs,file_name)
-    df =pd.concat(df_list).dropna(subset=['output','label'],axis=0)[['user_id','model','output','label','folder','file_name']]
+    df=pd.read_csv(os.path.join(TRAIN_DATA_DIR, 'annotated_answers.csv'))
     df= df[df.label.apply(type)  == str]
     df = df[~df.label.str.contains("-1")]
     df.label = df.label.astype(str)
     
-    llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv'))
-    llm_refusal_df.label = llm_refusal_df.label.astype(str)
+    # llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv'))
+    # llm_refusal_df.label = llm_refusal_df.label.astype(str)
 
-    df = pd.concat([df,llm_refusal_df])
-    df.drop_duplicates(subset=['output'],inplace=True)
+    # df = pd.concat([df,llm_refusal_df])
     df = df[df.label.str.len()!=0]
     df = df[df['label'].str.contains('\d')]
     df['labels_list'] =df.label.str.split(",").apply(lambda x: [int(elt) for elt in x ])
@@ -160,9 +143,9 @@ def get_answer_df(class_mode,drop_duplicates=False):
         for col in wave10_21_answer_df.filter(like='kpx_840_c').columns:
             wave10_21_answer_df[col] = wave10_21_answer_df[col].map(lookup)
         
-        llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv')).rename({'output':'kpx_840s','label':'kpx_840_c1'},axis=1)
-        llm_refusal_df['wave']= 'synthetic'
-        wave10_21_answer_df = pd.concat([wave10_21_answer_df,llm_refusal_df])
+        # llm_refusal_df= pd.read_csv(os.path.join(RAW_DATA_DIR,'llm_refusal.csv')).rename({'output':'kpx_840s','label':'kpx_840_c1'},axis=1)
+        # llm_refusal_df['wave']= 'synthetic'
+        # wave10_21_answer_df = pd.concat([wave10_21_answer_df,llm_refusal_df])
         
         labels_list = wave10_21_answer_df.filter(regex='kpx_840_c1|kpx_840_c2|kpx_840_c3').apply(lambda x: list(x[x.notna()].astype(int)), axis=1)
         classid2trainid = {int(classname):idx  for idx, classname in enumerate(sorted(pd.read_csv(os.path.join(CODING_DIR,'map.csv')).upperclass_id.unique())) }    
@@ -289,3 +272,8 @@ def get_label2str_dict(label2id,class_mode):
         label2str= {int(k): lookup_dict.get(v, v) for k, v in label2id.items()}
         print('label2str',label2str)
         return label2str
+
+
+
+df= get_annotated_answers()
+print('hello')

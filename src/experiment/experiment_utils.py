@@ -6,7 +6,7 @@ from transformers import  BitsAndBytesConfig
 from src.paths import PROMPT_DIR
 
 def llama2_remove_tag(output_decoded):
-    return re.sub(r".*\[/INST\]\s*", "", output_decoded)
+    return re.sub(r".*\[INST\]\s*", "", output_decoded, flags=re.DOTALL)
 
 def gemma_remove_tag(output_decoded):
     split_output = output_decoded.split("model\n", 1)

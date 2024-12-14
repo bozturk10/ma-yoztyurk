@@ -20,7 +20,7 @@ class CustomTrainer(Trainer):
                 raise ValueError('class_freq and train_num must be provided for DB loss')
             self.dbloss = DBloss(class_freq=self.class_freq, train_num=self.train_num)
 
-    def compute_loss(self, model, inputs, return_outputs=False):
+    def compute_loss(self, model, inputs, return_outputs=False,num_items_in_batch=None):
         """
         Custom loss computation supporting default, focal, and DB loss.
 

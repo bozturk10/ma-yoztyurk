@@ -12,15 +12,15 @@ from src.utils import load_lookup_data
 
 def define_metrics():
     accuracy = load("accuracy",'multilabel',trust_remote_code=True)
-    precision = load("precision",'multilabel',trust_remote_code=True)
-    recall = load("recall",'multilabel',trust_remote_code=True)
-    f1 = load("f1",'multilabel',trust_remote_code=True)
+    # precision = load("precision",'multilabel',trust_remote_code=True)
+    # recall = load("recall",'multilabel',trust_remote_code=True)
+    #f1 = load("f1",'multilabel',trust_remote_code=True)
 
     return {
         "accuracy": accuracy,
-        "precision": precision,
-        "recall": recall,
-        "f1": f1,
+        # "precision": precision,
+        # "recall": recall,
+        #"f1": f1,
     }
 
 def sigmoid(x):
@@ -37,10 +37,10 @@ def get_compute_metrics_function(metrics,target_names=None,threshold=0.5,save_cl
 
         average = 'samples'
         acc = metrics['accuracy'].compute(predictions=predictions, references=references)
-        f1 = metrics['f1'].compute(predictions=predictions, references=references,average=average)
-        precision = metrics['precision'].compute(predictions=predictions, references=references,average=average)
-        recall = metrics['recall'].compute(predictions=predictions, references=references,average=average)
-        print('accuracy:',acc, 'precision',precision, 'recall',recall, 'f1',f1)
+        #f1 = metrics['f1'].compute(predictions=predictions, references=references,average=average)
+        #precision = metrics['precision'].compute(predictions=predictions, references=references,average=average)
+        #recall = metrics['recall'].compute(predictions=predictions, references=references,average=average)
+        #print('accuracy:',acc, 'precision',precision, 'recall',recall)
         
         # Calculate rows with no positive predictions
         no_pos_preds = (predictions <= threshold).all(axis=1).sum()
@@ -56,9 +56,9 @@ def get_compute_metrics_function(metrics,target_names=None,threshold=0.5,save_cl
                     json.dump(clsf_dict, f)
         return {
             "accuracy": acc["accuracy"],
-            "precision": precision["precision"],
-            "recall": recall["recall"],
-            "f1": f1["f1"]
+            # "precision": precision["precision"],
+            # "recall": recall["recall"],
+            #"f1": f1["f1"]
         }
         
     return compute_metrics

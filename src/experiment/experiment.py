@@ -3,7 +3,7 @@ import os
 import time
 
 import torch
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from tqdm import tqdm
 
 from src.data.process_data import process_open_ended, process_wave_data
@@ -23,7 +23,7 @@ logger = setup_logger("experiment_logger")
 
 def experiment_setup(run_on_notebook=False, experiment_config_path=None):
     dotenv_path = os.path.join("experiment.env")
-    load_dotenv(dotenv_path)
+    #load_dotenv(dotenv_path)
     logger.info(os.environ.get("HF_HOME"))
     logger.info(os.environ.get("HUGGINGFACE_HUB_CACHE"))
 

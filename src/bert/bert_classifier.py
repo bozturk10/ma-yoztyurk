@@ -40,7 +40,6 @@ class BertClassifier:
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             "bert-base-german-cased",
-            cache_dir=os.environ["HUGGINGFACE_HUB_CACHE"],
             padding=True,
             truncation=True,
             max_length=512,
@@ -89,7 +88,6 @@ class BertClassifier:
             num_labels=self.num_labels,
             id2label=self.id2label,
             label2id=self.label2id,
-            cache_dir=os.environ["HUGGINGFACE_HUB_CACHE"],
             problem_type="multi_label_classification"
         )
 
@@ -119,7 +117,7 @@ class BertClassifier:
                 "per_device_eval_batch_size": 32,
                 "num_train_epochs": 15,
                 "weight_decay": 0.01,
-                "evaluation_strategy": "steps",
+                "eval_strategy": "steps",
                 "save_strategy": "steps",
                 'logging_steps': 100,
                 "load_best_model_at_end": True,

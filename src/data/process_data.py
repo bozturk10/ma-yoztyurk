@@ -2,8 +2,8 @@ import re
 import pandas as pd
 import numpy as np
 import os
-from data.read_data import get_wave_df_dict, load_lookup_data, load_raw_survey_data, read_stata_file
-from paths import (
+from src.data.read_data import get_wave_df_dict, load_lookup_data, load_raw_survey_data, read_stata_file
+from src.paths import (
     CODING_DIR,
     PROJECT_DIR,
     RAW_DATA_DIR,

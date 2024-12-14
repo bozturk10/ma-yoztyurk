@@ -1,6 +1,6 @@
 from src.analysis.data_processing import coarse_translation, wave_dates
 
-def get_label_distr_time_series_plot(survey_labels_dict2):
+def get_label_distr_time_series_plot_data(survey_labels_dict2):
     import plotly.express as px
     import plotly.graph_objects as go
     import pandas as pd

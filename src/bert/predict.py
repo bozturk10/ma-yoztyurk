@@ -1,7 +1,7 @@
 import argparse
 import pandas as pd
-from paths import TEXT_GEN_DIR
-from bert.bert_classifier import BertClassifier
+from src.paths import TEXT_GEN_DIR
+from src.bert.bert_classifier import BertClassifier
 import os
 
 def classify_experiments(experiment_data_path,model_name, threshold=0.5, device='cpu'):
@@ -21,4 +21,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    classify_experiments(experiment_data_path=args.experiment_data_path, threshold=args.threshold, device=args.device)
+    classify_experiments(experiment_data_path=args.experiment_data_path, model_name=args.model_name,threshold=args.threshold, device=args.device)
