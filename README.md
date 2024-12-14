@@ -11,21 +11,15 @@ Please find the dataset under Downloads > Datasets and then download
 https://search.gesis.org/research_data/ZA6838?doi=10.4232/1.14114
 
 
-
-## Repository Overview  
-
-This repository provides:  
-- The **codebase** for replicating the experiments presented in the paper.  
-- **Datasets** and preprocessing scripts for the German Longitudinal Election Studies (GLES).  
-- Documentation on experimental results and findings.  
-
-## Installation  
+## Installation  & Preprocessing 
 
 
 - `pip install requirements.txt && pip install -e .`
-- save your HF token as an env var `export HF_TOKEN=YOUR_HF_TOKEN`
-- extract GESIS data zip file into data\raw
+- save the HF token as an env var in your terminal i.e `export HF_TOKEN=YOUR_HF_TOKEN`. Note that for llama2 you need to request for a gated model access through HF.
+- extract GESIS data zip file into `data\raw` .
 - run `python src/data/education_preprocess.py` create data/coding_values/education_lookup.csv for getting education levels of participants at the date of surveys.
+
+## Replication
 - to replicate the experiments :
     - adjust `experiment_config.json` depending on your device (device,quantization,HF models) 
     -  you can find the config used in the experimentation `experiment_config_paper.json `
@@ -39,6 +33,7 @@ This repository provides:
     - then the text classification results will be appended to the outputs under EXPERIMENT_DATA_PATH.
 - If text generations are generated, you can replicate the analysis and the figures by
     - running the notebook `notebooks/paper_figures.ipynb`
+    - the raw data for the figures are available under `results`
 
 
 # References
