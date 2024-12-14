@@ -1,6 +1,5 @@
-# A customized version 
-# with ref https://github.com/wutong16/DistributionBalancedLoss/blob/a3ecaa9021a920fcce9fdafbd7d83b51bf526af8/mllt/models/losses/resample_loss.py
-
+# Taken directly from:
+# https://github.com/Roche/BalancedLossNLP/blob/main/Reuters/util_loss.py
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

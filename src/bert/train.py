@@ -9,7 +9,7 @@ from src.bert.data_prep import (
     split_llm_train_test, split_train_test_df
 )
 from bert_classifier import BertClassifier
-
+# python src/bert/train.py --class_mode coarse --dataset mixed --model_name bert_classifier --loss_type dbloss
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--class_mode", type=str, help='Class mode: "coarse" or "fine"')

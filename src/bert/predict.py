@@ -4,18 +4,21 @@ from paths import TEXT_GEN_DIR
 from bert.bert_classifier import BertClassifier
 import os
 
-def clasify_experiments(    wave_id,threshold=0.5,device='cpu'):
-    wave_path= os.path.join(TEXT_GEN_DIR, wave_id) 
-    experiments_to_clf=['Llama2_model_opinion']
-    experiments_to_clf= [os.path.join(wave_path, exp) for exp in experiments_to_clf] 
-    
-    model = BertClassifier(model_name='bert_mixed_coarse_resample20240708_195103',device=device) 
+def classify_experiments(experiment_data_path,model_name, threshold=0.5, device='cpu'):
 
-    for folder in experiments_to_clf:
-        experiment_data_path = folder
-        print(f"Predicting on data from {experiment_data_path}")
-        model.classify_experiment_folder(folder_path=experiment_data_path,  threshold=threshold)
-        print(f"Predictions saved to {experiment_data_path}")
+    model = BertClassifier(model_name=model_name, device=device)
+
+    print(f"Running on data in {experiment_data_path}")
+    model.classify_experiment_folder(folder_path=experiment_data_path, threshold=threshold)
+    print(f"Predictions saved to {experiment_data_path}")
 
 if __name__ == "__main__":
-    clasify_experiments(wave_id="12",device='cpu')
+    parser = argparse.ArgumentParser(description="Classify experiments using BERT model")
+    parser.add_argument('--experiment_data_path', type=str, required=True, help='Folder path for the experiment data')
+    parser.add_argument('--threshold', type=float, default=0.5, help='Threshold for classification')
+    parser.add_argument('--device', type=str, default='cpu', help='Device to run the model on (e.g., "cpu" or "cuda")')
+    parser.add_argument('--model_name', type=str, default='bert_mixed_coarse_resample20240708_195103', help='The name of the model')
+
+    args = parser.parse_args()
+
+    classify_experiments(experiment_data_path=args.experiment_data_path, threshold=args.threshold, device=args.device)
