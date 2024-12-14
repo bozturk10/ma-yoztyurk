@@ -9,7 +9,7 @@ from tqdm import tqdm
 from src.data.process_data import process_open_ended, process_wave_data
 from src.data.read_data import load_raw_survey_data
 from src.experiment.experiment_utils import get_experiment_config
-from HFTextGenerator import HFTextGenerator
+from src.experiment.HFTextGenerator import HFTextGenerator
 from src.logger import setup_logger
 from src.paths import (
     GENERATIONS_DIR,
@@ -21,13 +21,13 @@ from src.utils import format_prompt, get_experiment_log, save_experiment_log
 logger = setup_logger("experiment_logger")
 
 
-def experiment_setup(nb=False, experiment_config_path=None):
-    dotenv_path = os.path.join(PROJECT_DIR, "experiment.env")
+def experiment_setup(run_on_notebook=False, experiment_config_path=None):
+    dotenv_path = os.path.join("experiment.env")
     load_dotenv(dotenv_path)
     logger.info(os.environ.get("HF_HOME"))
     logger.info(os.environ.get("HUGGINGFACE_HUB_CACHE"))
 
-    if nb: 
+    if run_on_notebook: 
         EXPERIMENT_CONFIG_PATH = experiment_config_path
     else:
         parser = argparse.ArgumentParser(description="")
@@ -40,9 +40,9 @@ def experiment_setup(nb=False, experiment_config_path=None):
     logger.info(f"Using config: {config}")
 
     if config.get("experiment_results_folder") is None:
-        config["experiment_results_folder"] = f"{config['model_name'].replace('/','-')}_{config['wave_number']}_{config['generation_config']['temperature']}"
+        config["experiment_results_folder"] = f"{config['model_name'].replace('/','-')}_{config['wave_number']}"
 
-    config["prompt_fpath"] = os.path.join(PROMPT_DIR, config["prompt_fpath"])
+    config["prompt_fpath"] = os.path.join(PROMPT_DIR, config["prompt_fname"])
     config["experiment_dir"] = os.path.join(GENERATIONS_DIR,str(config["wave_number"]), config["experiment_results_folder"])
 
     return config

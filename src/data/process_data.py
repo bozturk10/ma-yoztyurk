@@ -41,8 +41,7 @@ def process_open_ended(wave_open_ended_df, df_coding_840s, wave_number):
     """
     
     """
-    #oe_answer_col = f"kp{wave_number}_840s"
-    #oe_class_col = f"kp{wave_number}_840_c1"
+
 
     i=wave_number
     regexstr=f"lfdn|kp{i}_840_c1|kp{i}_840_c2|kp{i}_840_c3|kp{i}_840s"
@@ -90,65 +89,7 @@ def process_open_ended(wave_open_ended_df, df_coding_840s, wave_number):
     )
     return wave_open_ended_df_merged
 
-# def process_open_ended(wave_open_ended_df, df_coding_840s, wave_number):
-#     oe_answer_col = f"kp{wave_number}_840s"
-#     oe_class_col = f"kp{wave_number}_840_c1"
-#     wave_open_ended_df = wave_open_ended_df[["lfdn", oe_answer_col]].rename(
-#         {oe_answer_col: "kpx_840_text"}, axis=1
-#     )
-#     wave_open_ended_df_merged = pd.merge(
-#         wave_open_ended_df[["lfdn", "kpx_840_text"]],
-#         df_coding_840s.filter(regex="lfdn_od|" + oe_class_col),
-#         left_on="lfdn",
-#         right_on="lfdn_od",
-#         how="inner",
-#     )
-#     wave_open_ended_df_merged["kpx_840_class1_name"]=wave_open_ended_df_merged[
-#         oe_class_col
-#     ].map(coding_list_dict)
-#     wave_open_ended_df_merged = wave_open_ended_df_merged.drop("lfdn_od", axis=1)
-#     wave_open_ended_df_merged = wave_open_ended_df_merged.rename(
-#         {
-#          oe_class_col: "kpx_840_cid"}, axis=1
-#     ) # rename columns to match format for different waves 
 
-#     return wave_open_ended_df_merged
-
-# def process_wave_data_old(wave_df, wave_open_ended_df_merged, wave_number):
-#     wave_df = pd.merge(
-#         wave_df, wave_open_ended_df_merged, left_on="lfdn", right_on="lfdn"
-#     )
-#     wave_df = wave_df.merge(edu_lookup, on="lfdn", how="left")
-#     wave_df = wave_df.merge(berufabschluss_lookup, on="code_2330", how="left")
-
-#     wave_df["leaning_party"] = wave_df[f"kp{wave_number}_2090a"].apply(
-#         lambda x: leaning_party_dict[x] if x in leaning_party_dict else x
-#     )
-#     wave_df["gender"] = wave_df["kpx_2280"].map(gender_dict)
-#     wave_df["age"] = pd.to_datetime(wave_df.field_start.iloc[0]).year - wave_df[
-#         "kpx_2290s"
-#     ].str.extract(r"(\d+)").astype(float)
-#     wave_df["age_group"] = pd.cut(
-#         wave_df["age"],
-#         bins=[18, 30, 45, 60, float("inf")],
-#         labels=["18-29 Years", "30-44 Years", "45-59 Years", "60 Years and Older"],
-#     )
-
-#     wave_df = wave_df[wave_df["age"].notna()]  # drop if age is nan
-#     wave_df.age = wave_df.age.astype(int)
-
-#     wave_df.ostwest = wave_df.ostwest.map(ostwest_dict)
-#     wave_df = wave_df[
-#         wave_df["ostwest"].str.contains("-") == False
-#     ]  # filter ostwest is empty
-#     wave_df = wave_df[
-#         wave_df["leaning_party"].str.contains("-") == False
-#     ]  # filter leaning_party is empty
-#     wave_df = wave_df[wave_df["code_2330"].notna()]
-#     wave_df = wave_df[wave_df["code_2320"].notna()]
-
-#     wave_df["schulabschluss_clause"] = wave_df["code_2320"].map(schulabschluss_dict)
-#     return wave_df
 
 def process_wave_data(wave_df, wave_open_ended_df_merged, wave_number):
     """

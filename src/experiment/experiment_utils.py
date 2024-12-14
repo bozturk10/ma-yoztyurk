@@ -27,7 +27,7 @@ def get_experiment_config(fpath):
     with open(fpath) as f:
         config = json.load(f)
 
-    config['prompt_fpath']=os.path.join(PROMPT_DIR,config['prompt_fpath'])  
+    config['prompt_fpath']=os.path.join(PROMPT_DIR,config['prompt_fname'])  
 
     model_name = config['model_name']
     if config['device'] == 'cuda':

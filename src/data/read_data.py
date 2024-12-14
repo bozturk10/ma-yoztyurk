@@ -60,4 +60,3 @@ def get_wave_df_dict():
 if __name__ == "__main__":
     print("PROJECT_DIR",PROJECT_DIR)
     print("CODING_DIR",CODING_DIR)
-    load_all_surveys()

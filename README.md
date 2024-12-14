@@ -23,7 +23,9 @@ This repository provides:
 
 
 - pip install requirements.txt
-- extract zip file into outputs\text_generations
+- extract GESIS data zip file into data\raw
+- run python src/data/education_preprocess.py create data/coding_values/education_lookup.csv for getting education levels of participants at the date of surveys.
+- run 
 - notebooks/paper_figures.ipynb
 
 - TODO reference to loss func repo, gesis dataset, 
